@@ -14,11 +14,6 @@ body {
     margin-bottom: 35px;
 }
 
-
-#questionsDiv {
-
-}
-
 #questionsDiv, #questionInputs {
     border: 1px solid #eaeaea;
     border-radius: 5px;
@@ -27,7 +22,7 @@ body {
 }
 
 #questionInputs {
-    margin-bottom: 30px;
+    margin: 30px 0px;
 }
 
 #questionInputs p {
@@ -43,16 +38,6 @@ body {
 .question {
     margin: 10px 0px;
     font-weight: bold;
-}
-
-#firebase-tweets {
-   display: inline-block;
-   float: right;
-   margin: 0px 60px 0px 0px;
-}
-
-#twitter-widget-0 {
-   width: 400px;
 }
 
 hr {
@@ -78,5 +63,14 @@ hr {
 #button {
     float: right;
     margin-right: 20px;
+}
+
+#login-btn {
+    text-decoration: none;
+    color: white;
+    background-color: #4099ff;
+    padding: 7px;
+    border-radius: 3px;
+    margin-left: 60px;
 }
 
