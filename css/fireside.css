@@ -6,6 +6,7 @@
 body {
     background-color: #f4f4f4;
     font-family: proximaNovaRegular;
+    margin-left: 60px;
 }
 
 
@@ -46,7 +47,7 @@ hr {
 
 #question-container {
     float: left;
-    margin-left: 60px;
+    /*margin-left: 60px;*/
     display: inline-block;
     min-width: 700px;
 }
@@ -71,6 +72,14 @@ hr {
     background-color: #4099ff;
     padding: 7px;
     border-radius: 3px;
-    margin-left: 60px;
+    /*margin-left: 60px;*/
+}
+
+#signed-in {
+    display: inline-block;
+    padding: 7px;
+    background-color: #F9D04E;
+    border-radius: 3px;
+    visibility: hidden;
 }
 

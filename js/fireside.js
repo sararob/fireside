@@ -21,12 +21,13 @@
        } else if (user) {
            //user authenticated with Firebase
            console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
+           $('<div/>').text("Signed in as @" + user.username).appendTo($('#signed-in'));
+           $('#login-btn').css("visibility", "hidden");
+           $('#signed-in').css("visibility", "visible");
        } else {
            //user is logged out
        }
    });
-
-   auth.login('twitter');
 
 
     //When questions are asked, write data to firebase
