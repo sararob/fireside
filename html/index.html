@@ -11,20 +11,108 @@
 <body>
 <script src="js/bootstrap.min.js"></script>
 <h1 id='header'>Fireside - Real-time Q&A</h1>
-<div id="signed-in">
-</div>
-<div id="login">
-    <a id="login-btn" href="#">
-        <span>Sign in with Twitter</span>
-    </a>
+
+<div id="sign-in-buttons">
+    <div id="signed-in">
+    </div>
+    <div id="login">
+        <a id="login-btn" href="#">
+            <span>Sign in with Twitter</span>
+        </a>
+        <a id="logout" href="#">
+            <span>Log Out</span>
+        </a>
+    </div>
 </div>
 
  <div id='question-container'>
     <div id='questionInputs'>
         <p>Ask a Question</p>
-        <input type='text' id='questionInput' placeholder='Question'>
+        <input type='text' id='questionInput' placeholder='Your question here...'>
     </div>
     <div id='questionsDiv'></div><br>
 </div>
+<script type="text/javascript">
+    //Create references to the question data
+    var fbaseRef = new Firebase("fireside.firebaseIO.com/");
+    var usersRef = fbaseRef.child('users');
+    var questionRef = fbaseRef.child('questions');
+    var repliesRef = fbaseRef.child('replies');
+
+    //Log users in
+   var loginButton = $('#login-btn');
+   loginButton.click(function (e) {
+        e.preventDefault();
+        loginButton.css("visibility", "hidden");
+        auth.login('twitter');
+   });
+
+   //Log users out
+   var logoutButton = $('#logout');
+   logoutButton.click(function (e) {
+        e.preventDefault();
+        loginButton.css("visibility", "visible");
+        logoutButton.css("visibility", "hidden");
+        $('#signed-in').css("visibility", "hidden");
+        auth.logout();
+    });
+
+   //Store user info in global variables
+   var username = '';
+
+   //Firebase Simple Login using twitter
+   var auth = new FirebaseSimpleLogin(fbaseRef, function(error, user) {
+       if (error) {
+           //an error occurred while attempting login
+           console.log(error);
+
+       } else if (user) {
+           //user authenticated with Firebase
+           console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
+           username = user.username;
+           $('<div/>').text("Signed in as @" + username).appendTo($('#signed-in'));
+           $('#login-btn').css("visibility", "hidden");
+           $('#signed-in').css("visibility", "visible");
+           $('#logout').css("visibility", "visible");
+       } else {
+           //user is logged out
+       }
+   });
+
+   // $('#logout').click(function (e) {
+   //      e.preventDefault();
+   //      console.log("logging out");
+   // });
+
+    //When questions are asked, write data to firebase
+    $('#questionInput').keypress(function (e) {
+        if(e.keyCode == 13) {
+            var question = $('#questionInput').val();
+            var user = username;
+            questionRef.push({question:question, replies: 0, user: user});
+            usersRef.child(user).child('questions').push({q: question});
+            $('#questionInput').val('');
+        };
+    });
+
+    //Callback that displays the new question with a reply field
+    questionRef.limit(10).on('child_added', function (snapshot) {
+        var q = snapshot.val();
+        $('<div/>').text(q.question).attr({'class': 'question'}).appendTo($('#questionsDiv'));
+        $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
+        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply'}).appendTo($('#questionsDiv'));
+        $('<button/>').attr({'class':'add-reply'}).text('Reply').appendTo($('#questionsDiv'));
+        $('<hr/>').appendTo('#questionsDiv');
+
+        //Handle replies
+        $('.reply').keypress(function (e) {
+            if (e.keyCode == 13) {
+                var reply = $(this).closest('input').val();
+                //alert(reply);
+                //Write this reply to the firebase for the question it's referencing
+        };
+    });
+    });
+</script>
 </body>
 </html>
