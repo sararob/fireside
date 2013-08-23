@@ -33,11 +33,12 @@
     <div id='questionsDiv'></div><br>
 </div>
 <script type="text/javascript">
-    //Create references to the question data
+    //Create references to the question and user data
     var fbaseRef = new Firebase("fireside.firebaseIO.com/");
     var usersRef = fbaseRef.child('users');
     var questionRef = fbaseRef.child('questions');
     var repliesRef = fbaseRef.child('replies');
+    var username = null;
 
     //Log users in
    var loginButton = $('#login-btn');
@@ -53,12 +54,11 @@
         e.preventDefault();
         loginButton.css("visibility", "visible");
         logoutButton.css("visibility", "hidden");
-        $('#signed-in').css("visibility", "hidden");
+        $('#signed-in').css({"display": "none", "visibility": "hidden"});
         auth.logout();
     });
 
-   //Store user info in global variables
-   var username = '';
+
 
    //Firebase Simple Login using twitter
    var auth = new FirebaseSimpleLogin(fbaseRef, function(error, user) {
@@ -87,11 +87,16 @@
     //When questions are asked, write data to firebase
     $('#questionInput').keypress(function (e) {
         if(e.keyCode == 13) {
-            var question = $('#questionInput').val();
-            var user = username;
-            questionRef.push({question:question, replies: 0, user: user});
-            usersRef.child(user).child('questions').push({q: question});
-            $('#questionInput').val('');
+            if(username == null) {
+                alert("You must be signed in to ask a question");
+            } else {
+                var question = $('#questionInput').val();
+                var user = username;
+                questionRef.push({question:question, replies: 0, user: user});
+                usersRef.child(user).child('questions').push({q: question});
+                $('#questionInput').val('');    
+            }
+            
         };
     });
 
@@ -107,8 +112,8 @@
         //Handle replies
         $('.reply').keypress(function (e) {
             if (e.keyCode == 13) {
-                var reply = $(this).closest('input').val();
-                //alert(reply);
+                var reply = $(e.closest());
+                console.log(reply);
                 //Write this reply to the firebase for the question it's referencing
         };
     });
