@@ -36,6 +36,7 @@
     var usersRef = fbaseRef.child('users');
     var questionRef = fbaseRef.child('questions');
     var repliesRef = fbaseRef.child('replies');
+    var repliesQuestionsRef = fbaseRef.child('questions').child('replies');
     var username = null;
 
     //Log users in
@@ -91,7 +92,7 @@
             } else {
                 var question = $('#questionInput').val();
                 var user = username;
-                questionRef.push({question:question, replies: 0, user: user});
+                questionRef.push({question:question, user: user, votes: 0});
                 usersRef.child(user).child('questions').push({q: question});
                 $('#questionInput').val('');
             }
@@ -99,35 +100,54 @@
         };
     });
 
-    //Write this reply to the firebase
-    var replyHandler = function (reply) {
-
-//                var user = username;
-        repliesRef.push({reply: reply});
-
+    //Write reply to the reply firebase and firebase for parent question
+    var replyHandler = function (reply, question, name) {
+        repliesRef.push({reply: reply, user: username, question: question.question, votes: 0});
+        fbaseRef.child("/questions/" + name + "/replies/").push({reply: reply, user: username, votes: 0});
     };
+
+    //Display reply below question
+//    repliesRef.on('child_added', function (snapshot) {
+//        var reply = snapshot.val();
+//        $('<div/>').text(reply.reply).appendTo($('#questionsDiv'));
+//    });
 
     //Callback that displays the new question with a reply field
     var totalQuestions = 1;
 
         questionRef.limit(10).on('child_added', function (snapshot) {
             var q = snapshot.val();
-            $('<button/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
-            $('<div/>').text(q.question).attr({'class': 'question'}).appendTo($('#questionsDiv'));
+            $('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
+            $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
             $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
+            $('<div/>').attr('class', 'replyContainer').appendTo($('questionsDiv'));
+
+            //Display all replies for a given question
+            var numReplies = q.replies;
+            console.log(numReplies);
+
+
             $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).appendTo($('#questionsDiv'));
-            $('<button/>').attr({'class':'add-reply'}).text('Reply').appendTo($('#questionsDiv'));
             $('<hr/>').appendTo('#questionsDiv');
+            console.log(snapshot.name());
 
 
             //Attach enter to replyHandler
             $('#reply' + totalQuestions).keypress(function (e) {
                 if (e.keyCode == 13) {
                     var reply = $(e.target).closest('input.reply')[0].value;
-                    replyHandler(reply);
+                    replyHandler(reply, q, snapshot.name());
                     e.currentTarget.value = '';
                 }
             });
+
+//            //Attach reply button to same replyHandler
+//            $('#replybtn' + totalQuestions).click(function (e) {
+//                var reply = $(e.target).closest('input.reply')[0].value;
+//                replyHandler(reply, q.question);
+//                e.currentTarget.value = '';
+//            });
+
             totalQuestions++;
         });
 </script>
