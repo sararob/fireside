@@ -78,11 +78,6 @@
        }
    });
 
-   // $('#logout').click(function (e) {
-   //      e.preventDefault();
-   //      console.log("logging out");
-   // });
-
 //    //Add a vote to a question when the vote key is clicked
 //    $('.upvote').click(function (e) {
 //
@@ -104,28 +99,37 @@
         };
     });
 
+    //Write this reply to the firebase
+    var replyHandler = function (reply) {
+
+//                var user = username;
+        repliesRef.push({reply: reply});
+
+    };
+
     //Callback that displays the new question with a reply field
-    questionRef.limit(10).on('child_added', function (snapshot) {
-        var q = snapshot.val();
-        $('<button/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
-        $('<div/>').text(q.question).attr({'class': 'question'}).appendTo($('#questionsDiv'));
-        $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
-        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply'}).appendTo($('#questionsDiv'));
-        $('<button/>').attr({'class':'add-reply'}).text('Reply').appendTo($('#questionsDiv'));
-        $('<hr/>').appendTo('#questionsDiv');
+    var totalQuestions = 1;
 
-        //Handle replies
-        $('.reply').keypress(function (e) {
-            if (e.keyCode == 13) {
-                var reply = $(e.target).closest('input.reply')[0].value;
-                console.log(reply); //Figure out why this is happening multiple times
+        questionRef.limit(10).on('child_added', function (snapshot) {
+            var q = snapshot.val();
+            $('<button/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
+            $('<div/>').text(q.question).attr({'class': 'question'}).appendTo($('#questionsDiv'));
+            $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
+            $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).appendTo($('#questionsDiv'));
+            $('<button/>').attr({'class':'add-reply'}).text('Reply').appendTo($('#questionsDiv'));
+            $('<hr/>').appendTo('#questionsDiv');
 
-                //Write this reply to the firebase for the question it's referencing
-                var user = username;
-                repliesRef.push({reply: reply, user: user});
-        };
-    });
-    });
+
+            //Attach enter to replyHandler
+            $('#reply' + totalQuestions).keypress(function (e) {
+                if (e.keyCode == 13) {
+                    var reply = $(e.target).closest('input.reply')[0].value;
+                    replyHandler(reply);
+                    e.currentTarget.value = '';
+                }
+            });
+            totalQuestions++;
+        });
 </script>
 </body>
 </html>
