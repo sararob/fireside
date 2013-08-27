@@ -1,15 +1,13 @@
 <html>
 <head>
     <title>Fireside</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
     <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
     <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
     <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
-    <script type='text/javascript' src='../js/fireside.js'></script>
-    <link rel="stylesheet" type="text/css" href="../css/fireside.css">
+    <!--<script type='text/javascript' src='../js/fireside.js'></script>-->
+    <link rel="stylesheet" type="text/css" href="fireside.css">
 </head>
 <body>
-<script src="js/bootstrap.min.js"></script>
 <h1 id='header'>Fireside - Real-time Q&A</h1>
 
 <div id="sign-in-buttons">
@@ -56,6 +54,7 @@
         logoutButton.css("visibility", "hidden");
         $('#signed-in').css({"display": "none", "visibility": "hidden"});
         auth.logout();
+        username = null;
     });
 
 
@@ -72,7 +71,7 @@
            username = user.username;
            $('<div/>').text("Signed in as @" + username).appendTo($('#signed-in'));
            $('#login-btn').css("visibility", "hidden");
-           $('#signed-in').css("visibility", "visible");
+           $('#signed-in').css({"visibility": "visible", "display": "inline-block"});
            $('#logout').css("visibility", "visible");
        } else {
            //user is logged out
@@ -84,25 +83,31 @@
    //      console.log("logging out");
    // });
 
+//    //Add a vote to a question when the vote key is clicked
+//    $('.upvote').click(function (e) {
+//
+//    })
+
     //When questions are asked, write data to firebase
     $('#questionInput').keypress(function (e) {
         if(e.keyCode == 13) {
             if(username == null) {
-                alert("You must be signed in to ask a question");
+                alert("You must sign in with Twitter to ask a question");
             } else {
                 var question = $('#questionInput').val();
                 var user = username;
                 questionRef.push({question:question, replies: 0, user: user});
                 usersRef.child(user).child('questions').push({q: question});
-                $('#questionInput').val('');    
+                $('#questionInput').val('');
             }
-            
+
         };
     });
 
     //Callback that displays the new question with a reply field
     questionRef.limit(10).on('child_added', function (snapshot) {
         var q = snapshot.val();
+        $('<button/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question'}).appendTo($('#questionsDiv'));
         $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
         $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply'}).appendTo($('#questionsDiv'));
@@ -112,9 +117,12 @@
         //Handle replies
         $('.reply').keypress(function (e) {
             if (e.keyCode == 13) {
-                var reply = $(e.closest());
-                console.log(reply);
+                var reply = $(e.target).closest('input.reply')[0].value;
+                console.log(reply); //Figure out why this is happening multiple times
+
                 //Write this reply to the firebase for the question it's referencing
+                var user = username;
+                repliesRef.push({reply: reply, user: user});
         };
     });
     });
