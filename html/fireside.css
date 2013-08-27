@@ -36,6 +36,7 @@ body {
 .question {
     margin: 10px 0px;
     font-weight: bold;
+    display: inline-block;
 }
 
 hr {
@@ -44,7 +45,6 @@ hr {
 
 #question-container {
     float: left;
-    /*margin-left: 60px;*/
     display: inline-block;
     min-width: 700px;
 }
@@ -73,7 +73,7 @@ hr {
 }
 
 #signed-in {
-    display: inline-block;
+    display: none;
     padding: 7px;
     background-color: #F9D04E;
     border-radius: 3px;
@@ -103,5 +103,10 @@ hr {
 .submittedBy {
     font-size: 12px;
     margin: -5px 0px 10px 0px;
+}
+
+.upvote {
+    display: inline;
+    margin-right: 7px;
 }
 
