@@ -1,0 +1,9 @@
+{
+    "rules": {
+        ".read": true,
+        "$questions": {
+            ".write": "auth != null",
+            ".validate": "newData.child('question').isString()"
+        }
+    }
+}
