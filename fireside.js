@@ -28,6 +28,7 @@
     //Log in button
    var loginButton = $('#login-btn');
    loginButton.click(function (e) {
+        console.log("first");
         e.preventDefault();
         console.log("test");
         loginButton.css("visibility", "hidden");
