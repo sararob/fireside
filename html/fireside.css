@@ -14,6 +14,7 @@ body {
     text-align: center;
     margin-bottom: 35px;
     color: white;
+    max-width: 700px;
 }
 
 #questionsDiv, #questionInputs {
@@ -37,6 +38,7 @@ body {
     margin: 10px 0px;
     font-weight: bold;
     display: inline-block;
+    font-size: 20px;
 }
 
 hr {
@@ -108,5 +110,23 @@ hr {
 .upvote {
     display: inline;
     margin-right: 7px;
+}
+
+.reply {
+    width: 400px;
+}
+
+.replyText {
+    margin-right: 13px;
+}
+
+.replyText, .replyUser {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.replyInfo {
+    font-size: 16px;
+    margin: 0px 0px 20px 18px;
 }
 
