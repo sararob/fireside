@@ -8,10 +8,17 @@
     <link rel="stylesheet" type="text/css" href="fireside.css">
 </head>
 <body>
-	<div id="userInfo"></div>
-	<div id="userQuestions"></div>
-	<div id="userReplies"></div>
-
+	<div id="profile">
+		<div id="userInfo"></div>
+		<h4 class="profHeader">Questions</h4>
+		<div id="userQuestions"></div>
+		<h4 class="profHeader">Replies</h4>
+		<div id="userReplies"></div>
+		<br><br>
+		<div id="back">
+			<a id="backLink" href=".">Back to Fireside</a>
+		</div>
+	</div>
 <script>
 	//Create firebase references
 	var fbaseRef = new Firebase("fireside.firebaseIO.com/");
@@ -38,11 +45,30 @@
 			var question = userQuestionsRef.child(i);
 			question.on('value', function (snap) {
 				var text = snap.val().q;
-				$();
+				$('<div/>').text(text).attr('class', 'userQ').appendTo($('#userQuestions'));
 			})
 		}
 	});
 
+	//Get the user's replies from the firebase
+	var userRepliesRef = usersRef.child("/" + user + "/replies");
+	userRepliesRef.on('value', function (snapshot) {
+		var r = snapshot.val();
+
+		//Render replies
+		for (var i in r) {
+			var reply = userRepliesRef.child(i);
+			reply.on('value', function (snap) {
+				var text = snap.val().reply;
+				var question = snap.val().respondingTo;
+				$('<div>', {class: 'eachReply'}).append(
+					$('<div/>').text(text).attr('class', 'userR').append(
+					$('<span/>').text(" in response to ").attr('class', 'responseTo').append(
+					$('<div/>').text("\"" + question + "\"").attr('class', 'responseQ')))
+				).appendTo($('#userReplies'));
+			})
+		}
+	});
 </script>
 </body>
 </html>

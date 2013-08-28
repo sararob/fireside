@@ -114,6 +114,7 @@ hr {
 
 .reply {
     width: 400px;
+    padding: 2px;
 }
 
 .replyText {
@@ -136,3 +137,68 @@ hr {
     margin-right: 18px;
 }
 
+.userLink {
+    text-decoration: none;
+    color: #00AAEB;
+}
+
+/* User Profile Page */
+
+#profile {
+    max-width: 700px;
+}
+
+#userInfo {
+    color: white;
+    text-align: center;
+}
+
+.userR {
+    display: inline-block;
+}
+
+.userQ, .eachReply {
+    padding: 20px 0px;
+    margin: 0px 20px;
+}
+
+.userQ {
+    border-bottom: 1px solid #f9d04e;
+}
+
+.responseTo {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.eachReply {
+    border-bottom: 1px solid #f9d04e;
+    margin-bottom: 5px;
+}
+
+#userQuestions, #userReplies {
+    margin-left: 40px;
+    border: 1px solid black;
+    background-color: white;
+    padding: 10px;
+    border-radius: 2px;
+    padding-bottom: 25px;
+}
+
+.profHeader {
+    color: #f9d04e;
+    font-size: 22px;
+}
+
+.responseQ {
+    margin: 10px 0px;
+    font-size: 14px;
+}
+
+#back {
+    text-align: center;
+}
+
+#backLink {
+    color: white;
+}

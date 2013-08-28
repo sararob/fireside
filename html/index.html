@@ -124,7 +124,7 @@
         //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
         $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
-            $('<a>').attr({'href': '/profile.html?user=' + q.user}).text("@" + q.user)
+            $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink'}).text("@" + q.user)
         ).appendTo($('#questionsDiv'));
 
         //Display all replies for a given question
