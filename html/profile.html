@@ -1,0 +1,48 @@
+<html>
+<head>
+    <title>Fireside</title>
+    <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
+    <!--<script type='text/javascript' src='../js/fireside.js'></script>-->
+    <link rel="stylesheet" type="text/css" href="fireside.css">
+</head>
+<body>
+	<div id="userInfo"></div>
+	<div id="userQuestions"></div>
+	<div id="userReplies"></div>
+
+<script>
+	//Create firebase references
+	var fbaseRef = new Firebase("fireside.firebaseIO.com/");
+    var usersRef = fbaseRef.child('users');
+
+	//Get user's namne
+	var user = getURLParameter('user');
+	function getURLParameter(name) {
+	    return decodeURI(
+	        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+	    );
+	}
+
+	//Add user info to header div
+	$('<h2/>').text(user).attr('class', 'twitterName').appendTo($('#userInfo'));
+
+	//Get the user's questions from the firebase
+	var userQuestionsRef = usersRef.child("/" + user + "/questions/");
+	userQuestionsRef.on('value', function (snapshot) {
+		var q = snapshot.val();
+
+		//Render questions
+		for (var i in q) {
+			var question = userQuestionsRef.child(i);
+			question.on('value', function (snap) {
+				var text = snap.val().q;
+				$();
+			})
+		}
+	});
+
+</script>
+</body>
+</html>

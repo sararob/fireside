@@ -101,6 +101,7 @@
     var replyHandler = function (reply, question, name) {
         repliesRef.push({reply: reply, user: username, question: question.question, votes: 0, questionId: name});
         fbaseRef.child("/questions/" + name + "/replies/").push({reply: reply, user: username, votes: 0});
+        usersRef.child(username).child('replies').push({reply: reply, respondingTo: question.question});
     };
 
 
@@ -122,7 +123,9 @@
         var q = snapshot.val();
         //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
-        $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
+        $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
+            $('<a>').attr({'href': '/profile.html?user=' + q.user}).text("@" + q.user)
+        ).appendTo($('#questionsDiv'));
 
         //Display all replies for a given question
         $('<div/>').attr({'id': snapshot.name(), 'class': 'replyInfo'}).appendTo($('#questionsDiv'));
