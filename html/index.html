@@ -31,7 +31,7 @@
     <div id='questionsDiv'></div><br>
 </div>
 <script type="text/javascript">
-    //Create references to the question and user data
+    //Create references to the questions, replies, and user data
     var fbaseRef = new Firebase("fireside.firebaseIO.com/");
     var usersRef = fbaseRef.child('users');
     var questionRef = fbaseRef.child('questions');
@@ -39,7 +39,26 @@
     var repliesQuestionsRef = fbaseRef.child('questions').child('replies');
     var username = null;
 
-    //Log users in
+    //Firebase Simple Login using twitter
+    var auth = new FirebaseSimpleLogin(fbaseRef, function(error, user) {
+        if (error) {
+            //an error occurred while attempting login
+            console.log(error);
+
+        } else if (user) {
+            //user authenticated with Firebase
+            console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
+            username = user.username;
+            $('<div/>').text("Signed in as @" + username).appendTo($('#signed-in'));
+            $('#login-btn').css("visibility", "hidden");
+            $('#signed-in').css({"visibility": "visible", "display": "inline-block"});
+            $('#logout').css("visibility", "visible");
+        } else {
+            //user is logged out
+        }
+    });
+
+    //Log in button
    var loginButton = $('#login-btn');
    loginButton.click(function (e) {
         e.preventDefault();
@@ -47,7 +66,7 @@
         auth.login('twitter');
    });
 
-   //Log users out
+   //Log out button
    var logoutButton = $('#logout');
    logoutButton.click(function (e) {
         e.preventDefault();
@@ -60,29 +79,7 @@
 
 
 
-   //Firebase Simple Login using twitter
-   var auth = new FirebaseSimpleLogin(fbaseRef, function(error, user) {
-       if (error) {
-           //an error occurred while attempting login
-           console.log(error);
 
-       } else if (user) {
-           //user authenticated with Firebase
-           console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
-           username = user.username;
-           $('<div/>').text("Signed in as @" + username).appendTo($('#signed-in'));
-           $('#login-btn').css("visibility", "hidden");
-           $('#signed-in').css({"visibility": "visible", "display": "inline-block"});
-           $('#logout').css("visibility", "visible");
-       } else {
-           //user is logged out
-       }
-   });
-
-//    //Add a vote to a question when the vote key is clicked
-//    $('.upvote').click(function (e) {
-//
-//    })
 
     //When questions are asked, write data to firebase
     $('#questionInput').keypress(function (e) {
@@ -100,56 +97,66 @@
         };
     });
 
-    //Write reply to the reply firebase and firebase for parent question
+    //Write reply to the reply firebase and parent question firebase
     var replyHandler = function (reply, question, name) {
-        repliesRef.push({reply: reply, user: username, question: question.question, votes: 0});
+        repliesRef.push({reply: reply, user: username, question: question.question, votes: 0, questionId: name});
         fbaseRef.child("/questions/" + name + "/replies/").push({reply: reply, user: username, votes: 0});
     };
 
-    //Display reply below question
-//    repliesRef.on('child_added', function (snapshot) {
-//        var reply = snapshot.val();
-//        $('<div/>').text(reply.reply).appendTo($('#questionsDiv'));
-//    });
+
+    //Render replies when they are added
+    repliesRef.on('child_added', function (snapshot) {
+        var replyData = snapshot.val();
+        var ref = $('#' + replyData.questionId);
+        var repDiv = $('<div/>').attr('id', 'rep' + replyData.questionId).appendTo(ref);
+        $('<span/>').text(replyData.reply).attr('class', 'replyText').appendTo(ref);
+        $('<span/>').text("  - @" + replyData.user).attr('class', 'replyUser').appendTo(ref);
+        //console.log(replyData.reply);
+    });
 
     //Callback that displays the new question with a reply field
     var totalQuestions = 1;
 
-        questionRef.limit(10).on('child_added', function (snapshot) {
-            var q = snapshot.val();
-            $('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
-            $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
-            $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
-            $('<div/>').attr('class', 'replyContainer').appendTo($('questionsDiv'));
+    questionRef.limit(10).on('child_added', function (snapshot) {
+        var q = snapshot.val();
+        //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
+        $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
+        $('<div/>').text("By @" + q.user).attr({'class': 'submittedBy'}).appendTo($('#questionsDiv'));
 
-            //Display all replies for a given question
-            var numReplies = q.replies;
-            console.log(numReplies);
+        //Display all replies for a given question
+        $('<div/>').attr({'id': snapshot.name(), 'class': 'replyInfo'}).appendTo($('#questionsDiv'));
+
+        //TODO: figure out why this is logging all replies but not adding them to the DOM
+        for (var i in q.replies) {
+            var rep = questionRef.child(snapshot.name() + "/replies/" + i);
+            rep.on('value', function(snap) {
+                var text = snap.val().reply;
+                console.log(text);
+                $('<span/>').text(text).attr('class', 'replyText').appendTo(rep);
+                $('<span/>').text(" - @" + snap.val().user).attr('class', 'replyUser').appendTo(rep);
+            });
+        }
+
+        //Add reply input field and line break to DOM
+        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).appendTo($('#questionsDiv'));
+        $('<hr/>').appendTo('#questionsDiv');
 
 
-            $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).appendTo($('#questionsDiv'));
-            $('<hr/>').appendTo('#questionsDiv');
-            console.log(snapshot.name());
-
-
-            //Attach enter to replyHandler
-            $('#reply' + totalQuestions).keypress(function (e) {
-                if (e.keyCode == 13) {
+        //Attach enter to replyHandler
+        $('#reply' + totalQuestions).keypress(function (e) {
+            if (e.keyCode == 13) {
+                if(username == null) {
+                    alert("You must sign in with Twitter to post an answer");
+                } else {
                     var reply = $(e.target).closest('input.reply')[0].value;
                     replyHandler(reply, q, snapshot.name());
                     e.currentTarget.value = '';
-                }
-            });
-
-//            //Attach reply button to same replyHandler
-//            $('#replybtn' + totalQuestions).click(function (e) {
-//                var reply = $(e.target).closest('input.reply')[0].value;
-//                replyHandler(reply, q.question);
-//                e.currentTarget.value = '';
-//            });
-
-            totalQuestions++;
+                };
+            }
         });
+
+        totalQuestions++;
+    });
 </script>
 </body>
 </html>
