@@ -1,4 +1,5 @@
-//Create references to the questions, replies, and user data
+$(function() {
+    // Create references to the questions, replies, and user data
     var fbaseRef = new Firebase("fireside.firebaseIO.com/");
     var usersRef = fbaseRef.child('users');
     var questionRef = fbaseRef.child('questions');
@@ -182,3 +183,4 @@
             })
         }
     });
+});
