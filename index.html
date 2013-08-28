@@ -1,12 +1,34 @@
-<!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Firereader: A real-time content aggregator based on Firebase and Angular</title>
-  <meta http-equiv="refresh" content="0;URL=html/">
-  <script type="text/javascript">window.location="html/";</script>
+    <title>Fireside</title>
+    <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
+    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
+    <script type='text/javascript' src='fireside.js'></script>
+    <link rel="stylesheet" type="text/css" href="fireside.css">
 </head>
 <body>
+<h1 id='header'>Fireside - Real-time Q&A</h1>
 
+<div id="sign-in-buttons">
+    <div id="signed-in">
+    </div>
+    <div id="login">
+        <a id="login-btn" href="#">
+            <span>Sign in with Twitter</span>
+        </a>
+        <a id="logout" href="#">
+            <span>Log Out</span>
+        </a>
+    </div>
+</div>
+
+ <div id='question-container'>
+    <div id='questionInputs'>
+        <p>Ask a Question</p>
+        <input type='text' id='questionInput' placeholder='Your question here...'>
+    </div>
+    <div id='questionsDiv'></div><br>
+</div>
 </body>
 </html>

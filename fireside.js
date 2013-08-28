@@ -1,37 +1,4 @@
-<html>
-<head>
-    <title>Fireside</title>
-    <script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
-    <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase-simple-login.js'></script>
-    <!--<script type='text/javascript' src='../js/fireside.js'></script>-->
-    <link rel="stylesheet" type="text/css" href="fireside.css">
-</head>
-<body>
-<h1 id='header'>Fireside - Real-time Q&A</h1>
-
-<div id="sign-in-buttons">
-    <div id="signed-in">
-    </div>
-    <div id="login">
-        <a id="login-btn" href="#">
-            <span>Sign in with Twitter</span>
-        </a>
-        <a id="logout" href="#">
-            <span>Log Out</span>
-        </a>
-    </div>
-</div>
-
- <div id='question-container'>
-    <div id='questionInputs'>
-        <p>Ask a Question</p>
-        <input type='text' id='questionInput' placeholder='Your question here...'>
-    </div>
-    <div id='questionsDiv'></div><br>
-</div>
-<script type="text/javascript">
-    //Create references to the questions, replies, and user data
+//Create references to the questions, replies, and user data
     var fbaseRef = new Firebase("fireside.firebaseIO.com/");
     var usersRef = fbaseRef.child('users');
     var questionRef = fbaseRef.child('questions');
@@ -104,7 +71,6 @@
         usersRef.child(username).child('replies').push({reply: reply, respondingTo: question.question});
     };
 
-
     //Render replies when they are added
     repliesRef.on('child_added', function (snapshot) {
         var replyData = snapshot.val();
@@ -113,7 +79,6 @@
             $('<span/>').text(replyData.reply).attr('class', 'replyText').append(
             $('<span/>').text("  - @" + replyData.user).attr('class', 'replyUser'))
         ).appendTo(ref);
-        //console.log(replyData.reply);
     });
 
     //Callback that displays the new question with a reply field
@@ -163,6 +128,55 @@
 
         totalQuestions++;
     });
-</script>
-</body>
-</html>
+
+    //Logic for user profile page
+
+        //Create firebase references
+    var fbaseRef = new Firebase("fireside.firebaseIO.com/");
+    var usersRef = fbaseRef.child('users');
+
+    //Get user's namne
+    var user = getURLParameter('user');
+    function getURLParameter(name) {
+        return decodeURI(
+            (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+        );
+    }
+
+    //Add user info to header div
+    $('<h2/>').text(user).attr('class', 'twitterName').appendTo($('#userInfo'));
+
+    //Get the user's questions from the firebase
+    var userQuestionsRef = usersRef.child("/" + user + "/questions/");
+    userQuestionsRef.on('value', function (snapshot) {
+        var q = snapshot.val();
+
+        //Render questions
+        for (var i in q) {
+            var question = userQuestionsRef.child(i);
+            question.on('value', function (snap) {
+                var text = snap.val().q;
+                $('<div/>').text(text).attr('class', 'userQ').appendTo($('#userQuestions'));
+            })
+        }
+    });
+
+    //Get the user's replies from the firebase
+    var userRepliesRef = usersRef.child("/" + user + "/replies");
+    userRepliesRef.on('value', function (snapshot) {
+        var r = snapshot.val();
+
+        //Render replies
+        for (var i in r) {
+            var reply = userRepliesRef.child(i);
+            reply.on('value', function (snap) {
+                var text = snap.val().reply;
+                var question = snap.val().respondingTo;
+                $('<div>', {class: 'eachReply'}).append(
+                    $('<div/>').text(text).attr('class', 'userR').append(
+                    $('<span/>').text(" in response to ").attr('class', 'responseTo').append(
+                    $('<div/>').text("\"" + question + "\"").attr('class', 'responseQ')))
+                ).appendTo($('#userReplies'));
+            })
+        }
+    });
