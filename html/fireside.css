@@ -130,3 +130,9 @@ hr {
     margin: 0px 0px 20px 18px;
 }
 
+.outsideDiv {
+    padding: 12px 0px;
+    border-bottom: 1px solid #f9d04e;
+    margin-right: 18px;
+}
+

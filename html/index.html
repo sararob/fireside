@@ -108,9 +108,10 @@
     repliesRef.on('child_added', function (snapshot) {
         var replyData = snapshot.val();
         var ref = $('#' + replyData.questionId);
-        var repDiv = $('<div/>').attr('id', 'rep' + replyData.questionId).appendTo(ref);
-        $('<span/>').text(replyData.reply).attr('class', 'replyText').appendTo(ref);
-        $('<span/>').text("  - @" + replyData.user).attr('class', 'replyUser').appendTo(ref);
+        $('<div>', {class: 'outsideDiv'}).append(
+            $('<span/>').text(replyData.reply).attr('class', 'replyText').append(
+            $('<span/>').text("  - @" + replyData.user).attr('class', 'replyUser'))
+        ).appendTo(ref);
         //console.log(replyData.reply);
     });
 
@@ -126,14 +127,16 @@
         //Display all replies for a given question
         $('<div/>').attr({'id': snapshot.name(), 'class': 'replyInfo'}).appendTo($('#questionsDiv'));
 
-        //TODO: figure out why this is logging all replies but not adding them to the DOM
+        //Render all replies for a given question
         for (var i in q.replies) {
             var rep = questionRef.child(snapshot.name() + "/replies/" + i);
             rep.on('value', function(snap) {
                 var text = snap.val().reply;
                 console.log(text);
-                $('<span/>').text(text).attr('class', 'replyText').appendTo(rep);
-                $('<span/>').text(" - @" + snap.val().user).attr('class', 'replyUser').appendTo(rep);
+                $('<div>', {class: 'outsideDiv'}).append(
+                    $('<span/>').text(text).attr('class', 'replyText').append(
+                    $('<span/>').text(" - @" + snap.val().user).attr('class', 'replyUser'))
+                ).appendTo($('#' + snapshot.name()));
             });
         }
 
