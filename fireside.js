@@ -29,6 +29,7 @@
    var loginButton = $('#login-btn');
    loginButton.click(function (e) {
         e.preventDefault();
+        console.log("test");
         loginButton.css("visibility", "hidden");
         auth.login('twitter');
    });
