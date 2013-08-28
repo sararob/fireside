@@ -29,9 +29,7 @@ $(function() {
     //Log in button
    var loginButton = $('#login-btn');
    loginButton.click(function (e) {
-        console.log("first");
         e.preventDefault();
-        console.log("test");
         loginButton.css("visibility", "hidden");
         auth.login('twitter');
    });
@@ -103,7 +101,6 @@ $(function() {
             var rep = questionRef.child(snapshot.name() + "/replies/" + i);
             rep.on('value', function(snap) {
                 var text = snap.val().reply;
-                console.log(text);
                 $('<div>', {class: 'outsideDiv'}).append(
                     $('<span/>').text(text).attr('class', 'replyText').append(
                     $('<span/>').text(" - @" + snap.val().user).attr('class', 'replyUser'))
