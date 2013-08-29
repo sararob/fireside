@@ -17,7 +17,9 @@ $(function() {
             //user authenticated with Firebase
             console.log('User ID: ' + user.id + ', Provider: ' + user.provider);
             username = user.username;
-            $('<div/>').text("Signed in as @" + username).appendTo($('#signed-in'));
+            $('<div/>').text("Signed in as ").append(
+                $('<a>').attr({'href': 'https://twitter.com/' + username, 'class': 'twitterLink'}).text("@" + username)
+                ).appendTo($('#signed-in'));
             $('#login-btn').css("visibility", "hidden");
             $('#signed-in').css({"visibility": "visible", "display": "inline-block"});
             $('#logout').css("visibility", "visible");

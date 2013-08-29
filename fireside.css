@@ -202,3 +202,12 @@ hr {
 #backLink {
     color: white;
 }
+
+.twitterLink {
+    text-decoration: none;
+    color: #00AAEB;
+}
+
+#firebaseLogo {
+    float:right;
+}
