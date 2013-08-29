@@ -45,10 +45,6 @@ $(function() {
         username = null;
     });
 
-
-
-
-
     //When questions are asked, write data to firebase
     $('#questionInput').keypress(function (e) {
         if(e.keyCode == 13) {
@@ -85,9 +81,9 @@ $(function() {
     //Callback that displays the new question with a reply field
     var totalQuestions = 1;
 
-    questionRef.limit(10).on('child_added', function (snapshot) {
+    questionRef.limit(15).on('child_added', function (snapshot) {
         var q = snapshot.val();
-        //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
+        $('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif'}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
         $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
             $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink'}).text("@" + q.user)
@@ -127,11 +123,16 @@ $(function() {
         });
 
         totalQuestions++;
+
+        //Attach double-click event for editing
+        $('#question' + totalQuestions).dblclick(function (event) {
+            console.log("double-click!");
+        })
     });
 
     //Logic for user profile page
 
-        //Create firebase references
+    //Create firebase references
     var fbaseRef = new Firebase("fireside.firebaseIO.com/");
     var usersRef = fbaseRef.child('users');
 
