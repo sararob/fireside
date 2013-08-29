@@ -86,10 +86,10 @@ $(function() {
     questionRef.limit(15).on('child_added', function (snapshot) {
         var q = snapshot.val();
         //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + totalQuestions}).appendTo($('#questionsDiv'));
-        $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
+        $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).prependTo($('#questionsDiv'));
         $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
-            $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink'}).text("@" + q.user)
-        ).appendTo($('#questionsDiv'));
+            $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink', 'id': 'user' + totalQuestions}).text("@" + q.user)
+        ).insertAfter($('#question' + totalQuestions));
 
         //Display all replies for a given question
         $('<div/>').attr({'id': snapshot.name(), 'class': 'replyInfo'}).appendTo($('#questionsDiv'));
@@ -107,8 +107,8 @@ $(function() {
         }
 
         //Add reply input field and line break to DOM
-        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).appendTo($('#questionsDiv'));
-        $('<hr/>').appendTo('#questionsDiv');
+        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).insertAfter($('#user' + totalQuestions));
+        $('<hr/>').insertAfter('#reply' + totalQuestions);
 
 
         //Attach enter to replyHandler

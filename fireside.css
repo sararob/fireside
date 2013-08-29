@@ -115,6 +115,8 @@ hr {
 .reply {
     width: 400px;
     padding: 2px;
+    display: block;
+    margin-top: 15px;
 }
 
 .replyText {
