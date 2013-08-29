@@ -122,12 +122,14 @@ $(function() {
             }
         });
 
-        totalQuestions++;
-
         //Attach double-click event for editing
         $('#question' + totalQuestions).dblclick(function (event) {
             console.log("double-click!");
-        })
+        });
+        
+        totalQuestions++;
+
+        
     });
 
     //Logic for user profile page
