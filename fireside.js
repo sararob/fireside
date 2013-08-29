@@ -83,7 +83,7 @@ $(function() {
 
     questionRef.limit(15).on('child_added', function (snapshot) {
         var q = snapshot.val();
-        $('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + totalQuestions}).appendTo($('#questionsDiv'));
+        //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + totalQuestions}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).appendTo($('#questionsDiv'));
         $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
             $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink'}).text("@" + q.user)
@@ -122,15 +122,11 @@ $(function() {
             }
         });
 
-        //Attach double-click event for editing
-        $('#question' + totalQuestions).dblclick(function (event) {
-            console.log("double-click!");
-        });
-
-        //Vote handler
-        $('#vote' + totalQuestions).click(function (voteEvent) {
-            alert("vote!" + totalQuestions);
-        });
+        // //Vote handler
+        // $('#question' + totalQuestions).dblclick(function (voteEvent) {
+        //     var quest = $(voteEvent.target).closest('.question').value;
+        //     console.log(quest);
+        // });
 
         totalQuestions++;
 
