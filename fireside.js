@@ -81,15 +81,14 @@ $(function() {
     });
 
     //Callback that displays the new question with a reply field
-    var totalQuestions = 1;
 
     questionRef.limit(15).on('child_added', function (snapshot) {
         var q = snapshot.val();
-        //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + totalQuestions}).appendTo($('#questionsDiv'));
-        $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + totalQuestions}).prependTo($('#questionsDiv'));
+        //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + snapshot.name()}).appendTo($('#questionsDiv'));
+        $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + snapshot.name()}).prependTo($('#questionsDiv'));
         $('<div/>').attr({'class': 'submittedBy'}).text("By ").append(
-            $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink', 'id': 'user' + totalQuestions}).text("@" + q.user)
-        ).insertAfter($('#question' + totalQuestions));
+            $('<a>').attr({'href': '/profile.html?user=' + q.user, 'class': 'userLink', 'id': 'user' + snapshot.name()}).text("@" + q.user)
+        ).insertAfter($('#question' + snapshot.name()));
 
         //Display all replies for a given question
         $('<div/>').attr({'id': snapshot.name(), 'class': 'replyInfo'}).appendTo($('#questionsDiv'));
@@ -107,12 +106,12 @@ $(function() {
         }
 
         //Add reply input field and line break to DOM
-        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + totalQuestions}).insertAfter($('#user' + totalQuestions));
-        $('<hr/>').insertAfter('#reply' + totalQuestions);
+        $('<input/>').attr({'type':'text', 'placeholder':'Add an answer', 'class':'reply', 'id': 'reply' + snapshot.name()}).insertAfter($('#user' + snapshot.name()));
+        $('<hr/>').insertAfter('#reply' + snapshot.name());
 
 
         //Attach enter to replyHandler
-        $('#reply' + totalQuestions).keypress(function (e) {
+        $('#reply' + snapshot.name()).keypress(function (e) {
             if (e.keyCode == 13) {
                 if(username == null) {
                     alert("You must sign in with Twitter to post an answer");
@@ -125,14 +124,11 @@ $(function() {
         });
 
         // //Vote handler
-        // $('#question' + totalQuestions).dblclick(function (voteEvent) {
+        // $('#question' + snapshot.name()).dblclick(function (voteEvent) {
         //     var quest = $(voteEvent.target).closest('.question').value;
         //     console.log(quest);
         // });
-
-        totalQuestions++;
-
-        
+        $('#' + snapshot.name()).insertAfter('#reply' + snapshot.name());        
     });
 
     //Logic for user profile page
@@ -182,7 +178,7 @@ $(function() {
                     $('<div/>').text(text).attr('class', 'userR').append(
                     $('<span/>').text(" in response to ").attr('class', 'responseTo').append(
                     $('<div/>').text("\"" + question + "\"").attr('class', 'responseQ')))
-                ).appendTo($('#userReplies'));
+                ).appendTo($('#reply' + snapshot.name()));
             })
         }
     });
