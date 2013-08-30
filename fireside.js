@@ -123,11 +123,6 @@ $(function() {
             }
         });
 
-        // //Vote handler
-        // $('#question' + snapshot.name()).dblclick(function (voteEvent) {
-        //     var quest = $(voteEvent.target).closest('.question').value;
-        //     console.log(quest);
-        // });
         $('#' + snapshot.name()).insertAfter('#reply' + snapshot.name());        
     });
 
@@ -178,7 +173,7 @@ $(function() {
                     $('<div/>').text(text).attr('class', 'userR').append(
                     $('<span/>').text(" in response to ").attr('class', 'responseTo').append(
                     $('<div/>').text("\"" + question + "\"").attr('class', 'responseQ')))
-                ).appendTo($('#reply' + snapshot.name()));
+                ).appendTo($('#userReplies'));
             })
         }
     });
