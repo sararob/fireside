@@ -82,7 +82,7 @@ $(function() {
 
     //Callback that displays the new question with a reply field
 
-    questionRef.limit(15).on('child_added', function (snapshot) {
+    questionRef.on('child_added', function (snapshot) {
         var q = snapshot.val();
         //$('<img/>').attr({'class': 'upvote', 'src': 'grayarrow.gif', 'id': 'vote' + snapshot.name()}).appendTo($('#questionsDiv'));
         $('<div/>').text(q.question).attr({'class': 'question', 'id': "question" + snapshot.name()}).prependTo($('#questionsDiv'));
