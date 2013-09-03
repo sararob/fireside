@@ -47,6 +47,16 @@ $(function() {
         username = null;
     });
 
+   //Detecting presence
+   var connectedRef = fbaseRef.child(".info/connected");
+   connectedRef.on("value", function(snap) {
+    if (snap.val() === true) {
+        console.log("connected");
+    } else {
+        console.log("not connected");
+    }
+   });
+
     //When questions are asked, write data to firebase
     $('#questionInput').keypress(function (e) {
         if(e.keyCode == 13) {
